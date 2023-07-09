@@ -1,0 +1,68 @@
+body{
+    font-family: 'Montserrat', sans-serif;
+    background-color: #F2D5DB;
+}
+
+nav {
+    background-color: #F2AEC1;
+}
+
+.botonera {
+    width: 100px;
+}
+.font-primary {
+    font-family: 'Oooh Baby', cursive;
+}
+
+.bg-pink-1 {
+    background-color: #F2D5DB;
+}
+
+/* .producto {
+    padding: 12px 0;
+} */
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+.productoEnCarrito {
+    height: 100px;
+}
+
+.pink {
+    text-decoration: none;
+    color:#40091D;
+}
+.pink:hover {
+    color: #f3f3f4;
+}
+
+.compra {
+    background-color: #F2AEC1;
+    color: black;
+}
+
+.input {
+    height: 40px;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    background-color: #f3f3f4;
+    color: #0d0c22;
+    transition: .3s ease;
+}
+
+.input::placeholder {
+    color: #9e9ea7;
+}
+
+.input:focus, input:hover {
+    outline: none;
+    border-color: rgba(234,76,137,0.4);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
+}
