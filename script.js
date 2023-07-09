@@ -10,26 +10,37 @@ let productos = [
     {id: 8, nombre: "Top crochet", categoria: ["Primavera","Verano","top"], precio: 4000, stock: 2, rutaImagen: "Imagenes/top.jpg"}
 ]
 
+// let arrayjson = productos.forEach(producto => localStorage.setItem(`${producto.id}`,JSON.stringify(producto)))
+// for (let producto of productos) {
+//     localStorage.setItem(`${producto.id}`, JSON.stringify(producto));
+// }
+// for(let producto of productos) {
+//     console.log(JSON.parse(localStorage.getItem(`${producto.id}`)))
+// }
+
+
 let contenedor = document.getElementById("productos")
 let contenedorCarrito = document.getElementById("contenedorCarrito")
-
 let buscador = document.getElementById("buscador")
-
 let carritoC = document.getElementById("carritoCant")
-
-
 let checkboxGorro = document.getElementById("checkGorro")
 let checkboxBufanda = document.getElementById("checkBufanda")
 let checkboxManta = document.getElementById("checkManta")
 let checkboxSaco = document.getElementById("checkSaco")
 let checkboxBebe = document.getElementById("checkBebe")
 let checkboxTop = document.getElementById("checkTop")
-
 let oPmayorMenor = document.getElementById("mayorMenor")
 let oPmenorMayor = document.getElementById("menorMayor")
 let oPordenAz = document.getElementById("ordenAz")
 let oPordenZa = document.getElementById("ordenZa")
 let select = document.getElementById("filtroLista")
+
+
+crearProductos(productos)
+let carritoCompras = []
+devolverCarrito()
+crearCarrito()
+total()
 
 
 checkboxGorro.addEventListener("change", filtratCategorias)
@@ -38,11 +49,7 @@ checkboxManta.addEventListener("change", filtratCategorias)
 checkboxSaco.addEventListener("change", filtratCategorias)
 checkboxBebe.addEventListener("change", filtratCategorias)
 checkboxTop.addEventListener("change", filtratCategorias)
-
 buscador.addEventListener("input",filtrarBuscador)
-crearProductos(productos)
-let carritoCompras = []
-
 select.addEventListener("change", filtrarSegun)
 
 
@@ -52,7 +59,6 @@ function limpiarProductos() {
         contenedor.removeChild(contenedor.firstChild);
     }
 }
-
 
 function crearProductos(listaProductos) {
     contenedor.innerHTML = ""
@@ -79,11 +85,50 @@ function crearProductos(listaProductos) {
     }    )
 }
 
+function crearCarrito() {
+    let carrito = document.getElementById("contenedorCarrito")
+    carritoCompras.forEach(producto => {
+        let divCarrito = document.createElement('div')
+        divCarrito.innerHTML = `
+        <div class="p-2 d-flex justify-content-between productoEnCarrito border-bottom">
+        <img class="h-100 me-2 rounded-3" src=${producto.rutaImagen} alt=${producto.nombre}>
+        <div class="me-auto d-flex flex-column justify-content-between">
+        <p class="m-0">${producto.nombre}</p>
+        <div class="botonera d-flex justify-content-between">
+        <button id="restar-${producto.id}" >-</button>
+        <span id="cantidad-${producto.id}">${producto.cantidad}</span>
+        <button id="sumar-${producto.id}" >+</button>
+        </div>
+                    <p class="m-0 text-start">Total:</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-between">
+                    <button id="eliminar-${producto.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                    </svg>
+                    </button>
+                    <p class="m-0"><b>${producto.precio}</b></p>
+                    </div>
+                    </div>
+                    `
+                    carrito.appendChild(divCarrito)
+                    let restar = document.getElementById(`restar-${producto.id}`)
+                    restar.addEventListener("click",() => restarUnidad(producto.id))
+                    let sumar = document.getElementById(`sumar-${producto.id}`)
+                    sumar.addEventListener("click",() => sumarUnidad(producto.id))
+                    let eliminar = document.getElementById(`eliminar-${producto.id}`)
+                    eliminar.addEventListener("click",() => eliminarProducto(producto.id))
+                })
+            }
+            
+            function total() {
+                let total = 0
+                carritoCompras.forEach(producto => total += producto.cantidad)
+                carritoC.innerText = total
+            }
 
 function agregarCarrito(e) {
-    let num = parseInt(carritoC.innerText);
-    num += 1;
-    carritoC.innerText = num;
     let productoBuscado = productos.find(producto => producto.id === Number(e.target.id))
     let indiceProducto = carritoCompras.findIndex(item => item.id === productoBuscado.id);
     if (indiceProducto !== -1) {
@@ -99,68 +144,39 @@ function agregarCarrito(e) {
     }
     limpiarProductos()
     crearCarrito()
+    total()
+    guardarStorage()
 }
 
-function crearCarrito() {
-    let carrito = document.getElementById("contenedorCarrito")
-    carritoCompras.forEach(producto => {
-        let divCarrito = document.createElement('div')
-        divCarrito.innerHTML = `
-            <div class="p-2 d-flex justify-content-between productoEnCarrito border-bottom">
-                <img class="h-100 me-2 rounded-3" src=${producto.rutaImagen} alt=${producto.nombre}>
-                <div class="me-auto d-flex flex-column justify-content-between">
-                    <p class="m-0">${producto.nombre}</p>
-                    <div class="botonera d-flex justify-content-between">
-                        <button id="restar-${producto.id}" >-</button>
-                        <span id="cantidad-${producto.id}">${producto.cantidad}</span>
-                        <button id="sumar-${producto.id}" >+</button>
-                    </div>
-                    <p class="m-0 text-start">Total:</p>
-                </div>
-                <div class="d-flex flex-column justify-content-between">
-                    <button id="eliminar-${producto.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-                        </svg>
-                    </button>
-                    <p class="m-0"><b>${producto.precio}</b></p>
-                </div>
-            </div>
-        `
-        carrito.appendChild(divCarrito)
-        let restar = document.getElementById(`restar-${producto.id}`)
-        restar.addEventListener("click",() => restarUnidad(producto.id))
-        let sumar = document.getElementById(`sumar-${producto.id}`)
-        sumar.addEventListener("click",() => sumarUnidad(producto.id))
-        let eliminar = document.getElementById(`eliminar-${producto.id}`)
-        eliminar.addEventListener("click",() => eliminarProducto(producto.id))
-    })
+function devolverCarrito () {
+    for (let i = 0; i < localStorage.length; i++) {
+        let clave = localStorage.key(i);
+        let valor = localStorage.getItem(clave);
+        let producto = JSON.parse(valor);
+    carritoCompras.push(producto);
 }
-
+}
 
 function eliminarProducto(id) {
     let carritoNuevo = carritoCompras.filter(producto => producto.id != id)
     carritoCompras = carritoNuevo
+    localStorage.removeItem(id)
     limpiarProductos()
     crearCarrito()
+    total()
+    guardarStorage()
 }
 
 function sumarUnidad(id) {
-    let num = parseInt(carritoC.innerText);
-    num += 1;
-    carritoC.innerText = num;
     let productoSeleccionado = carritoCompras.find(producto => producto.id == id)
     productoSeleccionado.cantidad += 1
     let contador = document.getElementById(`cantidad-${id}`);
     contador.innerText = productoSeleccionado.cantidad
-    
+    total()
+    guardarStorage()
 }
 
 function restarUnidad(id) {
-    let num = parseInt(carritoC.innerText);
-    num -= 1;
-    carritoC.innerText = num;
     let productoSeleccionado = carritoCompras.find(producto => producto.id == id)
     if (productoSeleccionado.cantidad > 1){
         productoSeleccionado.cantidad -= 1
@@ -169,6 +185,8 @@ function restarUnidad(id) {
     }
     let contador = document.getElementById(`cantidad-${id}`);
     contador.innerText = productoSeleccionado.cantidad
+    total()
+    guardarStorage()
 }
 
 
@@ -177,17 +195,17 @@ function filtrarBuscador() {
     let arrayFiltrado = productos.filter(producto =>
         producto.nombre.toLowerCase().includes(valorBuscador) ||
         producto.categoria.some(categoria => categoria.toLowerCase().includes(valorBuscador))
-    );
-    crearProductos(arrayFiltrado);
-}
-
-function filtratCategorias() {
-    let categoriasSeleccionadas = [];
-    if (checkboxGorro.checked) {
-        categoriasSeleccionadas.push("gorro");
+        );
+        crearProductos(arrayFiltrado);
     }
-    if (checkboxBufanda.checked) {
-        categoriasSeleccionadas.push("cuello");
+    
+    function filtratCategorias() {
+        let categoriasSeleccionadas = [];
+        if (checkboxGorro.checked) {
+            categoriasSeleccionadas.push("gorro");
+        }
+        if (checkboxBufanda.checked) {
+            categoriasSeleccionadas.push("cuello");
     }
     if (checkboxManta.checked) {
         categoriasSeleccionadas.push("manta");
@@ -250,4 +268,8 @@ function ordenZa (array) {
     return crearProductos(array.sort((a, b) => b.nombre.localeCompare(a.nombre)))
 }
 
-
+function guardarStorage() {
+    for(let producto of carritoCompras) {
+    localStorage.setItem(`${producto.id}`, JSON.stringify(producto));
+}
+}
