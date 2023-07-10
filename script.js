@@ -10,19 +10,12 @@ let productos = [
     {id: 8, nombre: "Top crochet", categoria: ["Primavera","Verano","top"], precio: 4000, stock: 2, rutaImagen: "Imagenes/top.jpg"}
 ]
 
-// let arrayjson = productos.forEach(producto => localStorage.setItem(`${producto.id}`,JSON.stringify(producto)))
-// for (let producto of productos) {
-//     localStorage.setItem(`${producto.id}`, JSON.stringify(producto));
-// }
-// for(let producto of productos) {
-//     console.log(JSON.parse(localStorage.getItem(`${producto.id}`)))
-// }
-
 
 let contenedor = document.getElementById("productos")
 let contenedorCarrito = document.getElementById("contenedorCarrito")
 let buscador = document.getElementById("buscador")
 let carritoC = document.getElementById("carritoCant")
+let totalPrecio = document.getElementById("totalPrecio")
 let checkboxGorro = document.getElementById("checkGorro")
 let checkboxBufanda = document.getElementById("checkBufanda")
 let checkboxManta = document.getElementById("checkManta")
@@ -108,7 +101,7 @@ function crearCarrito() {
                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
                     </svg>
                     </button>
-                    <p class="m-0"><b>${producto.precio}</b></p>
+                    <p class="m-0"><b id="precio-${producto.id}">${producto.precio*producto.cantidad}</b></p>
                     </div>
                     </div>
                     `
@@ -121,12 +114,15 @@ function crearCarrito() {
                     eliminar.addEventListener("click",() => eliminarProducto(producto.id))
                 })
             }
-            
-            function total() {
-                let total = 0
-                carritoCompras.forEach(producto => total += producto.cantidad)
-                carritoC.innerText = total
-            }
+
+function total() {
+    let totalCantidad = 0
+    let totalP = 0
+    carritoCompras.forEach(producto => totalCantidad += producto.cantidad)
+    carritoC.innerText = totalCantidad
+    carritoCompras.forEach(producto => totalP += (producto.precio*producto.cantidad))
+    totalPrecio.innerText = `$ ${totalP}`
+}
 
 function agregarCarrito(e) {
     let productoBuscado = productos.find(producto => producto.id === Number(e.target.id))
@@ -171,7 +167,10 @@ function sumarUnidad(id) {
     let productoSeleccionado = carritoCompras.find(producto => producto.id == id)
     productoSeleccionado.cantidad += 1
     let contador = document.getElementById(`cantidad-${id}`);
+    let precioTotal = document.getElementById(`precio-${id}`)
     contador.innerText = productoSeleccionado.cantidad
+    let suma = productoSeleccionado.precio * productoSeleccionado.cantidad
+    precioTotal.innerText = suma
     total()
     guardarStorage()
 }
@@ -184,7 +183,10 @@ function restarUnidad(id) {
         eliminarProducto(id)
     }
     let contador = document.getElementById(`cantidad-${id}`);
+    let precioTotal = document.getElementById(`precio-${id}`)
     contador.innerText = productoSeleccionado.cantidad
+    let resta = productoSeleccionado.precio * productoSeleccionado.cantidad
+    precioTotal.innerText = resta
     total()
     guardarStorage()
 }
