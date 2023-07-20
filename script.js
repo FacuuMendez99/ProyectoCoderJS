@@ -53,11 +53,13 @@ function finalCompra() {
             icon: 'success',
             text: 'Gracias por comprar'
         })
+        limpiarProductos()
     }else {
         Swal.fire({
             icon:'error',
             text: "¡Agrega productos al carrito para poder realizar la compra!"
         })
+        
     }
 }
 

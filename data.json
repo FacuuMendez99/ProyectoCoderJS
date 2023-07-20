@@ -62,5 +62,29 @@
     "precio": 4000,
     "stock": 2,
     "rutaImagen": "Imagenes/top.jpg"
+  },
+  {
+    "id": 9,
+    "nombre": "Gorro Combinado",
+    "categoria": ["Otoño", "Invierno", "gorro"],
+    "precio": 3000,
+    "stock": 2,
+    "rutaImagen": "Imagenes/gorroAzB.jpg"
+  },
+  {
+    "id": 10,
+    "nombre": "Top cerrado",
+    "categoria": ["Primavera", "Verano", "top"],
+    "precio": 4000,
+    "stock": 2,
+    "rutaImagen": "Imagenes/topB.jpg"
+  },
+  {
+    "id": 11,
+    "nombre": "Top crochet",
+    "categoria": ["Primavera", "Verano", "top"],
+    "precio": 4000,
+    "stock": 2,
+    "rutaImagen": "Imagenes/topC.jpg"
   }
 ]
