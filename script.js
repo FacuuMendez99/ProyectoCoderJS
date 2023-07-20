@@ -1,15 +1,15 @@
 
-let productos = [
-    {id: 2, nombre: "Bufanda", categoria: ["Otoño","Invierno","cuello"], precio: 4500, stock: 2, rutaImagen: "Imagenes/bufandon.jpg"},
-    {id: 3, nombre: "Gorro", categoria: ["Otoño","Invierno","gorro"], precio: 3000, stock: 2, rutaImagen: "Imagenes/gorroAz.jpg"},
-    {id: 5, nombre: "Gorro lunares", categoria: ["Otoño","Invierno","gorro"], precio: 3500, stock: 2, rutaImagen: "Imagenes/gorroLunarNg.jpg"},
-    {id: 6, nombre: "Cuello", categoria: ["Otoño","Invierno","cuello"], precio: 2000, stock: 2, rutaImagen: "Imagenes/cuelloGr.jpg"},
-    {id: 1, nombre: "Saco", categoria: ["Otoño","Invierno","saco"], precio: 10000, stock: 2, rutaImagen: "Imagenes/saco.jpg"},
-    {id: 7, nombre: "Bebe", categoria: ["Otoño","Invierno","bebe"], precio: 7000, stock: 2, rutaImagen: "Imagenes/bebeRj.jpg"},
-    {id: 4, nombre: "Manta", categoria: ["Otoño","Invierno","manta"], precio: 9500, stock: 2, rutaImagen: "Imagenes/sirena.jpg"},
-    {id: 8, nombre: "Top crochet", categoria: ["Primavera","Verano","top"], precio: 4000, stock: 2, rutaImagen: "Imagenes/top.jpg"}
-]
-
+const baseDatos = 'data.json';
+const productos = []
+fetch(baseDatos)
+.then(response => response.json())
+.then(data => {
+    for (let i = 0; i < data.length; i++) {
+        productos.push(data[i])
+}
+crearProductos(productos)
+}
+)
 
 let contenedor = document.getElementById("productos")
 let contenedorCarrito = document.getElementById("contenedorCarrito")
@@ -27,9 +27,10 @@ let oPmenorMayor = document.getElementById("menorMayor")
 let oPordenAz = document.getElementById("ordenAz")
 let oPordenZa = document.getElementById("ordenZa")
 let select = document.getElementById("filtroLista")
+let finalizarCompra = document.getElementById("finalizarCompra")
 
 
-crearProductos(productos)
+
 let carritoCompras = []
 devolverCarrito()
 crearCarrito()
@@ -44,6 +45,21 @@ checkboxBebe.addEventListener("change", filtratCategorias)
 checkboxTop.addEventListener("change", filtratCategorias)
 buscador.addEventListener("input",filtrarBuscador)
 select.addEventListener("change", filtrarSegun)
+finalizarCompra.addEventListener("click",finalCompra)
+
+function finalCompra() {
+    if(carritoCompras.length > 0) {
+        Swal.fire({
+            icon: 'success',
+            text: 'Gracias por comprar'
+        })
+    }else {
+        Swal.fire({
+            icon:'error',
+            text: "¡Agrega productos al carrito para poder realizar la compra!"
+        })
+    }
+}
 
 
 function limpiarProductos() {
@@ -55,16 +71,15 @@ function limpiarProductos() {
 
 function crearProductos(listaProductos) {
     contenedor.innerHTML = ""
-    listaProductos.forEach(producto => {
-        let divProducto = document.createElement('div')
+    listaProductos.forEach(producto => { let divProducto = document.createElement('div')
         divProducto.innerHTML = `
         <div class="pt-3">
             <div class="card shadow-lg rounded border-4">
-                <img class="card-img-top " src=${producto.rutaImagen} alt="${producto.nombre}">
+                <img id="img-${producto.id}" class="card-img-top " src=${producto.rutaImagen} alt="${producto.nombre}">
                 <div class="card-body d-flex flex-column justify-content-center">
                     <p class="card-title text-center">${producto.nombre}</p>
-                    <p class="card-title text-center">3 cuotas sin interes de <b>$${(producto.precio / 3).toFixed(2)}</b></p>
                     <p class="text-center"><b>$${producto.precio}</b></p>
+                    <p class="card-title text-center">3 cuotas sin interes de <b>$${(producto.precio / 3).toFixed(2)}</b></p>
                     <button id="${producto.id}" class="compra p-2">
                         Agregar al carrito
                     </button>
@@ -74,46 +89,46 @@ function crearProductos(listaProductos) {
         `     
         contenedor.appendChild(divProducto)
         let botonAgregarCarrito = document.getElementById(producto.id) 
-        botonAgregarCarrito.addEventListener("click",agregarCarrito)          
+        botonAgregarCarrito.addEventListener("click",agregarCarrito)
+        let verProducto = document.getElementById(`img-${producto.id}`) 
+        verProducto.addEventListener("click",() => mostrarProducto(producto.id))         
     }    )
 }
 
 function crearCarrito() {
     let carrito = document.getElementById("contenedorCarrito")
-    carritoCompras.forEach(producto => {
-        let divCarrito = document.createElement('div')
+    carritoCompras.forEach(producto => { let divCarrito = document.createElement('div')
         divCarrito.innerHTML = `
         <div class="p-2 d-flex justify-content-between productoEnCarrito border-bottom">
-        <img class="h-100 me-2 rounded-3" src=${producto.rutaImagen} alt=${producto.nombre}>
+            <img class="h-100 me-2 rounded-3" src=${producto.rutaImagen} alt=${producto.nombre}>
         <div class="me-auto d-flex flex-column justify-content-between">
-        <p class="m-0">${producto.nombre}</p>
-        <div class="botonera d-flex justify-content-between">
-        <button id="restar-${producto.id}" >-</button>
-        <span id="cantidad-${producto.id}">${producto.cantidad}</span>
-        <button id="sumar-${producto.id}" >+</button>
+            <p class="m-0">${producto.nombre}</p>
+            <div class="botonera d-flex justify-content-between align-items-center">
+                <button id="restar-${producto.id}" class="btn-carrito" >-</button>
+                <span id="cantidad-${producto.id}">${producto.cantidad}</span>
+                <button id="sumar-${producto.id}" class="btn-carrito">+</button>
+            </div>
+            <p class="m-0 text-start">Total:</p>
         </div>
-                    <p class="m-0 text-start">Total:</p>
-                    </div>
-                    <div class="d-flex flex-column justify-content-between">
-                    <button id="eliminar-${producto.id}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+        <div class="d-flex flex-column justify-content-between">
+            <button id="eliminar-${producto.id}" class="btn-eliminar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-                    </svg>
-                    </button>
-                    <p class="m-0"><b id="precio-${producto.id}">${producto.precio*producto.cantidad}</b></p>
-                    </div>
-                    </div>
-                    `
-                    carrito.appendChild(divCarrito)
-                    let restar = document.getElementById(`restar-${producto.id}`)
-                    restar.addEventListener("click",() => restarUnidad(producto.id))
-                    let sumar = document.getElementById(`sumar-${producto.id}`)
-                    sumar.addEventListener("click",() => sumarUnidad(producto.id))
-                    let eliminar = document.getElementById(`eliminar-${producto.id}`)
-                    eliminar.addEventListener("click",() => eliminarProducto(producto.id))
-                })
-            }
+                </svg>
+            </button>
+                <p class="m-0"><b id="precio-${producto.id}">${producto.precio*producto.cantidad}</b></p>
+            </div>
+        </div>`
+    carrito.appendChild(divCarrito)
+    let restar = document.getElementById(`restar-${producto.id}`)
+    restar.addEventListener("click",() => restarUnidad(producto.id))
+    let sumar = document.getElementById(`sumar-${producto.id}`)
+    sumar.addEventListener("click",() => sumarUnidad(producto.id))
+    let eliminar = document.getElementById(`eliminar-${producto.id}`)
+    eliminar.addEventListener("click",() => eliminarProducto(producto.id))
+    })
+}
 
 function total() {
     let totalCantidad = 0
@@ -138,6 +153,20 @@ function agregarCarrito(e) {
             rutaImagen:productoBuscado.rutaImagen
         })
     }
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Se agregó con exito',
+        showConfirmButton: false,
+        timer: 1000,
+        showClass: {
+            popup: 'animate__animated animat e__fadeInRight'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        }
+    })
     limpiarProductos()
     crearCarrito()
     total()
@@ -154,13 +183,23 @@ function devolverCarrito () {
 }
 
 function eliminarProducto(id) {
-    let carritoNuevo = carritoCompras.filter(producto => producto.id != id)
-    carritoCompras = carritoNuevo
-    localStorage.removeItem(id)
-    limpiarProductos()
-    crearCarrito()
-    total()
-    guardarStorage()
+    Swal.fire({
+        title: '¿Desea eliminar el producto?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#F2AEC1',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+        let carritoNuevo = carritoCompras.filter(producto => producto.id != id)
+        carritoCompras = carritoNuevo
+        localStorage.removeItem(id)
+        limpiarProductos()
+        crearCarrito()
+        total()
+        guardarStorage()
+        }
+    })
 }
 
 function sumarUnidad(id) {

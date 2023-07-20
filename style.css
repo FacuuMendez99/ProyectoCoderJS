@@ -18,9 +18,9 @@ nav {
     background-color: #F2D5DB;
 }
 
-/* .producto {
-    padding: 12px 0;
-} */
+.bg-pink-2 {
+    background-color: #F2AEC1;
+}
 
 .logo {
     height: 40px;
@@ -42,6 +42,37 @@ nav {
 .compra {
     background-color: #F2AEC1;
     color: black;
+    border: none;
+    border-radius: 12px;
+    width: 75%;
+    margin: auto;
+}
+.compra:hover {
+    scale: 1.02;
+    transition: all 0.1s ease-in;
+}
+.compra:active {
+    transform: translateY(1px) translateX(-1px);
+}
+
+.btn-carrito {
+    border: #F2AEC1 2px solid;
+    width: 30px;
+    border-radius: 100px;
+    color: #40091D;
+}
+.btn-carrito:active {
+    transform: translateY(1px) translateX(-1px);
+}
+
+.btn-eliminar {
+    border: #F2AEC1 2px solid;
+    border-radius: 10px;
+    color: #262626;
+    scale: 1.2;
+}
+.btn-eliminar:active {
+    transform: translateY(1px) translateX(-1px);
 }
 
 .input {
@@ -66,3 +97,20 @@ nav {
     background-color: #fff;
     box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
 }
+
+
+.hero {
+    height: 550px;
+    background-image: url(Imagenes/Fondo.jpg);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero div {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+}
+
